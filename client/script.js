@@ -5,16 +5,15 @@ function askQuestion() {
     const submitButton = document.getElementById("submit-button");
     if (question === "") {
         alert("tekstbericht is leeg!");
-        return; // Stop de functie als de vraag leeg is
+        return;
     }
 
-    // Disable submit button
     submitButton.disabled = true;
 
-    // Display user message in chat window
+
     displayMessage(question, true);
 
-    // Show loading spinner
+
     loadingScreen.classList.remove("hidden");
 
     // Make POST request to server
@@ -41,20 +40,17 @@ function askQuestion() {
         })
         .catch(error => {
             console.error("Error:", error);
-            // Display error message in chat window
+
             displayMessage("server error.", false);
 
-            // Enable submit button
             submitButton.disabled = false;
 
-            // Hide loading spinner
             loadingScreen.classList.add("hidden");
 
-            // Scroll to bottom of chat window
             chatContainer.scrollTop = chatContainer.scrollHeight;
         });
 
-    // Clear input field
+
     document.getElementById("question").value = "";
 }
 
