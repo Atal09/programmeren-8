@@ -3,7 +3,7 @@ H1{
     text-align: center;
 }
 body{
-    background-color: #f1f1f1;
+    background-color: mediumseagreen;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -65,18 +65,3 @@ button {
     background-color: #e0e0e0;
     align-self: flex-end;
 }
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    animation: spin 2s linear infinite;
-    margin: 0 auto;
-}
-
-/*@keyframes spin {*/
-/*    0% { transform: rotate(0deg); }*/
-/*    100% { transform: rotate(360deg); }*/
-/*}*/
