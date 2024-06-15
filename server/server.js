@@ -3,14 +3,6 @@ import cors from 'cors';
 import fetch from 'node-fetch';
 import { ChatOpenAI } from "@langchain/openai";
 
-// import { ChatAnthropic } from "@langchain/anthropic";
-//
-//
-// const model = new ChatAnthropic({
-//     temperature: 0.0,
-//     apiKey: process.env.ANTHROPIC_API_KEY,
-// });
-
 const app = express();
 const port = 8000;
 
@@ -25,7 +17,6 @@ const model = new ChatOpenAI({
     azureOpenAIApiDeploymentName: process.env.ENGINE_NAME,
 });
 
-
 let messages = [
     ["system", "You are a football expert"],
 ];
@@ -33,13 +24,77 @@ let messages = [
 app.post("/chat", async (req, res) => {
     try {
         const prompt = req.body.prompt;
-        const response = await sport(prompt);
+        let response;
+
+        if (prompt.toLowerCase().includes("football") || prompt.toLowerCase().includes("weer")) {
+            const weatherResponse = await getWeather();
+            const isNiceDay = checkWeather(weatherResponse);
+            if (prompt.toLowerCase().includes("weer")) {
+                if (isNiceDay) {
+                    response = { content: "Wat een prachtige dag! ☀️" };
+                } else {
+                    response = { content: "Het weer van vandaag is niet geschikt om te voetballen. 🌧️" };
+                }
+            }
+
+            // Add weather information to the messages array and pass it to the model
+            messages.push(["human", `Weather update: ${weatherResponse}`]);
+            messages.push(["ai", response.content]);
+
+        } else {
+            response = await sport(prompt);
+        }
+
         res.json(response.content);
     } catch (error) {
         console.error("Error chat query", error);
         res.status(500).json({ error: "Server Error" });
     }
 });
+
+// This function fetches the current weather information for a specific location
+async function getWeather() {
+    // Coordinates for the location
+    const latitude =  52.98586209935476;
+    const longitude = 6.536059716378744;
+
+
+    // API key for the OpenWeatherMap API
+    const apiKey = "03a1fae275570282ad099806a013c79a";
+
+    // URL for the API call, including the coordinates and the API key
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`;
+
+    try {
+        // Make a GET request to the API
+        const response = await fetch(url);
+
+        // Parse the response as JSON
+        const weatherData = await response.json();
+
+        // Return only the main weather condition
+        return weatherData.weather[0].main;
+    } catch (error) {
+
+        console.error("Error fetching weather data", error);
+        throw error;
+    }
+}
+
+// This function checks if the weather is suitable for football
+function checkWeather(weatherData) {
+
+    // Check if the weather data is valid
+    if (!weatherData) {
+
+        console.error("Invalid weather data");
+        return false;
+    }
+
+    // Check if the weather is clear or partly cloudy
+    return weatherData === "Clear" || weatherData === "Clouds";
+}
+
 // Function to handle chat prompts
 async function sport(prompt) {
     messages.push(["human", prompt]);
@@ -50,11 +105,9 @@ async function sport(prompt) {
         if (prompt.toLowerCase().includes("joke.")) {
             const joke = await fetchJoke();
             console.log(joke);
-            // Add the joke to the messages array and construct a response
             messages.push(["ai", `Here's a joke for you: ${joke.setup}. ${joke.delivery}`]);
             response = { content: `Here's a joke for you: ${joke.setup}. ${joke.delivery}` };
         } else {
-            // If the prompt is not "joke.", then invoke the model to generate a response
             response = await model.invoke(messages, {
                 temperature: 0.0,
                 maxTokens: 100,
@@ -89,8 +142,6 @@ async function fetchJoke() {
     }
 }
 
-
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
-

@@ -15,7 +15,4 @@ npm install cors
 npm install node-fetch
 
 
-Problemen: soms als je joke typt krijg het een server error,
-maar meestal gaat het goed.
-
 
