@@ -25,6 +25,7 @@ app.post("/chat", async (req, res) => {
     try {
         const prompt = req.body.prompt;
         let response;
+        messages.push(["human", prompt]);
 
         if (prompt.toLowerCase().includes("football") || prompt.toLowerCase().includes("weer")) {
             const weatherResponse = await getWeather();
@@ -97,7 +98,7 @@ function checkWeather(weatherData) {
 
 // Function to handle chat prompts
 async function sport(prompt) {
-    messages.push(["human", prompt]);
+    // messages.push(["human", prompt]);
 
     let response;
 
