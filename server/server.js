@@ -2,7 +2,7 @@ import express from "express";
 import cors from 'cors';
 import fetch from 'node-fetch';
 import { ChatOpenAI } from "@langchain/openai";
-
+// import { ChatAnthropic } from "@langchain/anthropic";
 const app = express();
 const port = 8000;
 
@@ -16,6 +16,12 @@ const model = new ChatOpenAI({
     azureOpenAIApiInstanceName: process.env.INSTANCE_NAME,
     azureOpenAIApiDeploymentName: process.env.ENGINE_NAME,
 });
+
+// const model = new ChatAnthropic({
+//     temperature: 0.0,
+//     apiKey: process.env.ANTHROPIC_API_KEY,
+// });
+
 
 let messages = [
     ["system", "You are a football expert"],
